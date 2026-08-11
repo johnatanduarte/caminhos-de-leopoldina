@@ -7,12 +7,14 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { useRouter } from "expo-router"; // 1. Importe o roteador
 import { styles } from "./styles";
 
-// Atenção ao "export default" aqui:
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const router = useRouter(); // 2. Inicialize o roteador
 
   const handleLogin = () => {
     console.log("Tentativa de login:", { email, password });
@@ -58,7 +60,10 @@ export default function Login() {
             />
           </View>
 
-          <TouchableOpacity style={styles.forgotPassword}>
+          <TouchableOpacity
+            style={styles.forgotPassword}
+            onPress={() => router.push("/forgot-password")}
+          >
             <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
           </TouchableOpacity>
 
@@ -69,7 +74,8 @@ export default function Login() {
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>Ainda não tem conta? </Text>
-          <TouchableOpacity>
+          {/* 3. Adicione a ação de navegação no botão */}
+          <TouchableOpacity onPress={() => router.push("/register")}>
             <Text style={styles.registerText}>Cadastre-se</Text>
           </TouchableOpacity>
         </View>
