@@ -18,6 +18,7 @@ export default function Login() {
 
   const handleLogin = () => {
     console.log("Tentativa de login:", { email, password });
+    router.replace("/home");
   };
 
   return (
