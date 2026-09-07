@@ -1,0 +1,105 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f3f4f6',
+  },
+  header: {
+    backgroundColor: '#1a3d2b',
+    paddingTop: 60,
+    paddingBottom: 32,
+    alignItems: 'center',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  avatarContainer: {
+    width: 100,
+    height: 100,
+    backgroundColor: '#e5e7eb',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#ffffff',
+    marginBottom: 16,
+  },
+  avatarText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#9ca3af',
+  },
+  name: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  location: {
+    fontSize: 14,
+    color: '#d1d5db',
+    marginTop: 4,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 16,
+    marginTop: -24,
+    paddingHorizontal: 24,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    padding: 16,
+    borderRadius: 16,
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1b5e3b',
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginTop: 4,
+  },
+  menuContainer: {
+    padding: 24,
+    marginTop: 8,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  menuItemText: {
+    fontSize: 16,
+    color: '#1f2937',
+    fontWeight: '500',
+  },
+  menuItemArrow: {
+    fontSize: 16,
+    color: '#9ca3af',
+  },
+  logoutButton: {
+    marginTop: 24,
+    backgroundColor: '#fee2e2',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  logoutText: {
+    color: '#dc2626',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+});

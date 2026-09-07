@@ -1,49 +1,56 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  FlatList, 
-  TouchableOpacity 
-} from 'react-native';
-import { styles } from './styles';
+import React, { useState } from "react";
+import { useRouter } from "expo-router";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
+import { styles } from "./styles";
 
 const MOCK_TRAILS = [
   {
-    id: '1',
-    title: 'Rota de Piacatuba',
-    distance: '12 km',
-    difficulty: 'Moderado',
-    duration: '3h 30m',
+    id: "1",
+    title: "Rota de Piacatuba",
+    distance: "12 km",
+    difficulty: "Moderado",
+    duration: "3h 30m",
   },
   {
-    id: '2',
-    title: 'Trilha do Morro do Cruzeiro',
-    distance: '5 km',
-    difficulty: 'Difícil',
-    duration: '2h 00m',
+    id: "2",
+    title: "Trilha do Morro do Cruzeiro",
+    distance: "5 km",
+    difficulty: "Difícil",
+    duration: "2h 00m",
   },
   {
-    id: '3',
-    title: 'Caminho das Fazendas Históricas',
-    distance: '25 km',
-    difficulty: 'Fácil (Bicicleta)',
-    duration: '4h 00m',
-  }
+    id: "3",
+    title: "Caminho das Fazendas Históricas",
+    distance: "25 km",
+    difficulty: "Fácil (Bicicleta)",
+    duration: "4h 00m",
+  },
 ];
 
 export function Home() {
-  const [search, setSearch] = useState('');
+  const router = useRouter();
+  const [search, setSearch] = useState("");
 
   // Lógica de filtro automático sensível a maiúsculas/minúsculas
-  const filteredTrails = MOCK_TRAILS.filter((trail) => 
-    trail.title.toLowerCase().includes(search.toLowerCase())
+  const filteredTrails = MOCK_TRAILS.filter((trail) =>
+    trail.title.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const renderTrailCard = ({ item }: { item: typeof MOCK_TRAILS[0] }) => (
-    <TouchableOpacity style={styles.card} activeOpacity={0.8}>
+  const renderTrailCard = ({ item }: { item: (typeof MOCK_TRAILS)[0] }) => (
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.8}
+      // 👇 Adicione o "as any" aqui
+      onPress={() => router.push(`/trail/${item.id}` as any)}
+    >
       <View style={styles.cardImagePlaceholder}>
-        <Text style={{ color: '#64748b' }}>[ Imagem da Trilha ]</Text>
+        <Text style={{ color: "#64748b" }}>[ Imagem da Trilha ]</Text>
       </View>
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.title}</Text>
@@ -60,9 +67,36 @@ export function Home() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <View>
+            <Text style={styles.greeting}>Olá, Explorador</Text>
+            <Text style={styles.title}>Encontre sua próxima aventura</Text>
+          </View>
+
+          <TouchableOpacity onPress={() => router.push("/profile")}>
+            <View
+              style={{
+                width: 40,
+                height: 40,
+                backgroundColor: "#ffffff",
+                borderRadius: 20,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "#1b5e3b", fontWeight: "bold" }}>JD</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.greeting}>Olá, Explorador</Text>
         <Text style={styles.title}>Encontre sua próxima aventura</Text>
-        
+
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.searchInput}
@@ -79,11 +113,15 @@ export function Home() {
         keyExtractor={(item) => item.id}
         renderItem={renderTrailCard}
         contentContainerStyle={styles.listContainer}
-        ListHeaderComponent={<Text style={styles.sectionTitle}>Trilhas em Destaque</Text>}
+        ListHeaderComponent={
+          <Text style={styles.sectionTitle}>Trilhas em Destaque</Text>
+        }
         showsVerticalScrollIndicator={false}
         // Mensagem amigável caso a pesquisa não encontre nada
         ListEmptyComponent={
-          <Text style={{ textAlign: 'center', marginTop: 20, color: '#6b7280' }}>
+          <Text
+            style={{ textAlign: "center", marginTop: 20, color: "#6b7280" }}
+          >
             Nenhuma trilha encontrada para "{search}".
           </Text>
         }
