@@ -94,8 +94,6 @@ export function Home() {
             </View>
           </TouchableOpacity>
         </View>
-        <Text style={styles.greeting}>Olá, Explorador</Text>
-        <Text style={styles.title}>Encontre sua próxima aventura</Text>
 
         <View style={styles.searchContainer}>
           <TextInput

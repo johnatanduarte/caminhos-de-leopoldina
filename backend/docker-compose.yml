@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: caminhos_leopoldina_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sua_senha_aqui
+      POSTGRES_DB: caminhos_leopoldina
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
