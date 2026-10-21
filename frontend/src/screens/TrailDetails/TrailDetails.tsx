@@ -1,9 +1,12 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { styles } from './styles';
 
-// Banco de dados falso temporário para simular os detalhes
+// 1. Pegamos a largura exata da tela em que o app está rodando
+const { width } = Dimensions.get('window');
+
+// Banco de dados falso temporário com suporte a múltiplas fotos locais
 const MOCK_TRAIL_DETAILS: Record<string, any> = {
   '1': {
     title: 'Rota de Piacatuba',
@@ -12,6 +15,10 @@ const MOCK_TRAIL_DETAILS: Record<string, any> = {
     duration: '3h 30m',
     elevation: '320m',
     history: 'Um dos distritos mais antigos da região, conhecido por sua arquitetura colonial e pelo tradicional festival de viola. O percurso passa por antigas fazendas de café e áreas de forte preservação ambiental.',
+    // Exemplo de imagem única local
+    images: [
+      require('../../../assets/piedade.jpeg') 
+    ],
   },
   '2': {
     title: 'Trilha do Morro do Cruzeiro',
@@ -20,6 +27,11 @@ const MOCK_TRAIL_DETAILS: Record<string, any> = {
     duration: '2h 00m',
     elevation: '450m',
     history: 'Uma subida íngreme que recompensa os exploradores com a vista panorâmica mais impressionante de Leopoldina. Caminho tradicional de peregrinação e apreciação da topografia local.',
+    // 2. Coloque os arquivos das imagens na pasta assets do seu projeto e aponte os caminhos aqui
+    images: [
+      require('../../../assets/cruzeiro.jpeg'), 
+      require('../../../assets/cruzeiro2.jpeg'), 
+    ],
   },
   '3': {
     title: 'Caminho das Fazendas Históricas',
@@ -28,12 +40,14 @@ const MOCK_TRAIL_DETAILS: Record<string, any> = {
     duration: '4h 00m',
     elevation: '150m',
     history: 'Rota ideal para ciclistas. Um mergulho no passado econômico da região, margeando propriedades seculares que definiram a cultura e a história do município no século XIX.',
+    images: [
+      require('../../../assets/piedade.jpeg')
+    ],
   }
 };
 
 export function TrailDetails() {
   const router = useRouter();
-  // Captura o ID da trilha que veio da Home
   const { id } = useLocalSearchParams<{ id: string }>(); 
   
   const trail = MOCK_TRAIL_DETAILS[id ?? '1'];
@@ -51,16 +65,34 @@ export function TrailDetails() {
 
   return (
     <View style={styles.container}>
-      {/* Botão de voltar flutuante */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <Text style={styles.backButtonText}>← Voltar</Text>
       </TouchableOpacity>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Placeholder para a foto da trilha */}
-        <View style={styles.headerImagePlaceholder}>
-          <Text style={{ color: '#ffffff', opacity: 0.5 }}>[ Imagem de Capa ]</Text>
-        </View>
+        
+        {/* Carrossel de Fotos Corrigido */}
+        {trail.images && trail.images.length > 0 ? (
+          <ScrollView 
+            horizontal 
+            pagingEnabled 
+            showsHorizontalScrollIndicator={true}
+            style={{ height: 250 }} 
+          >
+            {trail.images.map((imgSource: any, index: number) => (
+              <Image
+                key={index}
+                source={imgSource} // Agora recebe direto o objeto gerado pelo require()
+                style={{ width: width, height: 250 }} // 3. A largura dinâmica faz a imagem preencher 100% da tela
+                resizeMode="cover"
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <View style={styles.headerImagePlaceholder}>
+            <Text style={{ color: '#ffffff', opacity: 0.5 }}>[ Imagem de Capa ]</Text>
+          </View>
+        )}
 
         <View style={styles.contentContainer}>
           <View style={styles.titleRow}>
@@ -70,7 +102,6 @@ export function TrailDetails() {
             </View>
           </View>
 
-          {/* Cartão de Informações Técnicas */}
           <View style={styles.statsCard}>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Distância</Text>
@@ -89,7 +120,6 @@ export function TrailDetails() {
           <Text style={styles.sectionTitle}>História e Memória</Text>
           <Text style={styles.description}>{trail.history}</Text>
 
-          {/* Cartão do Guia de Áudio */}
           <View style={styles.audioCard}>
             <View style={styles.audioTextContainer}>
               <Text style={styles.audioTitle}>Guia de Áudio</Text>

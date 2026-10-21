@@ -6,6 +6,7 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
+  Image
 } from "react-native";
 import { styles } from "./styles";
 
@@ -16,6 +17,7 @@ const MOCK_TRAILS = [
     distance: "12 km",
     difficulty: "Moderado",
     duration: "3h 30m",
+    image: require("../../../assets/piedade.jpeg"),
   },
   {
     id: "2",
@@ -23,6 +25,7 @@ const MOCK_TRAILS = [
     distance: "5 km",
     difficulty: "Difícil",
     duration: "2h 00m",
+    image: require("../../../assets/cruzeiro2.jpeg"),
   },
   {
     id: "3",
@@ -42,16 +45,26 @@ export function Home() {
     trail.title.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const renderTrailCard = ({ item }: { item: (typeof MOCK_TRAILS)[0] }) => (
+const renderTrailCard = ({ item }: { item: (typeof MOCK_TRAILS)[0] }) => (
     <TouchableOpacity
       style={styles.card}
       activeOpacity={0.8}
       // 👇 Adicione o "as any" aqui
       onPress={() => router.push(`/trail/${item.id}` as any)}
     >
-      <View style={styles.cardImagePlaceholder}>
-        <Text style={{ color: "#64748b" }}>[ Imagem da Trilha ]</Text>
-      </View>
+      {/* Nova lógica: se tiver imagem no MOCK_TRAILS, exibe a foto; senão, mostra o placeholder */}
+      {item.image ? (
+        <Image 
+          source={item.image} 
+          style={{ width: '100%', height: 150, borderTopLeftRadius: 12, borderTopRightRadius: 12 }} 
+          resizeMode="cover" 
+        />
+      ) : (
+        <View style={styles.cardImagePlaceholder}>
+          <Text style={{ color: "#64748b" }}>[ Imagem da Trilha ]</Text>
+        </View>
+      )}
+
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.title}</Text>
         <Text style={styles.cardDetails}>
@@ -112,7 +125,7 @@ export function Home() {
         renderItem={renderTrailCard}
         contentContainerStyle={styles.listContainer}
         ListHeaderComponent={
-          <Text style={styles.sectionTitle}>Trilhas em Destaque</Text>
+          <Text style={styles.sectionTitle}>Explorar sugestões de rotas</Text>
         }
         showsVerticalScrollIndicator={false}
         // Mensagem amigável caso a pesquisa não encontre nada
