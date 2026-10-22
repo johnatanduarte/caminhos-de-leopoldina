@@ -9,8 +9,8 @@ export default function TabLayout() {
         tabBarActiveTintColor: "#1b5e3b", // Verde do Figma para a aba ativa
         tabBarInactiveTintColor: "#9ca3af", // Cinza para inativas
         tabBarStyle: {
-          height: 65,
-          paddingBottom: 10,
+          height: 110, // Aumenta a altura total da barra
+          paddingBottom: 55, // Empurra os ícones para cima, afastando da barra do sistema
           paddingTop: 10,
           backgroundColor: "#ffffff",
           borderTopWidth: 1,

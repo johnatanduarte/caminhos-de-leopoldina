@@ -39,20 +39,17 @@ const MOCK_TRAILS = [
 export function Home() {
   const router = useRouter();
   const [search, setSearch] = useState("");
-
-  // Lógica de filtro automático sensível a maiúsculas/minúsculas
+  
   const filteredTrails = MOCK_TRAILS.filter((trail) =>
     trail.title.toLowerCase().includes(search.toLowerCase()),
   );
 
-const renderTrailCard = ({ item }: { item: (typeof MOCK_TRAILS)[0] }) => (
+  const renderTrailCard = ({ item }: { item: (typeof MOCK_TRAILS)[0] }) => (
     <TouchableOpacity
       style={styles.card}
       activeOpacity={0.8}
-      // 👇 Adicione o "as any" aqui
       onPress={() => router.push(`/trail/${item.id}` as any)}
     >
-      {/* Nova lógica: se tiver imagem no MOCK_TRAILS, exibe a foto; senão, mostra o placeholder */}
       {item.image ? (
         <Image 
           source={item.image} 
@@ -80,31 +77,18 @@ const renderTrailCard = ({ item }: { item: (typeof MOCK_TRAILS)[0] }) => (
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <View>
+        {/* Usando os estilos corretos do styles.ts para arrumar o Avatar */}
+        <View style={styles.headerTopRow}>
+          <View style={styles.headerTextContainer}>
             <Text style={styles.greeting}>Olá, Explorador</Text>
             <Text style={styles.title}>Encontre sua próxima aventura</Text>
           </View>
 
-          <TouchableOpacity onPress={() => router.push("/profile")}>
-            <View
-              style={{
-                width: 40,
-                height: 40,
-                backgroundColor: "#ffffff",
-                borderRadius: 20,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ color: "#1b5e3b", fontWeight: "bold" }}>JD</Text>
-            </View>
+          <TouchableOpacity 
+            style={styles.profileButton}
+            onPress={() => router.push("/profile")}
+          >
+            <Text style={{ color: "#1b5e3b", fontWeight: "bold" }}>JD</Text>
           </TouchableOpacity>
         </View>
 
@@ -114,13 +98,13 @@ const renderTrailCard = ({ item }: { item: (typeof MOCK_TRAILS)[0] }) => (
             placeholder="Buscar trilhas ou lugares..."
             placeholderTextColor="#9ca3af"
             value={search}
-            onChangeText={setSearch} // Atualiza o texto instantaneamente
+            onChangeText={setSearch} 
           />
         </View>
       </View>
 
       <FlatList
-        data={filteredTrails} // Agora consome a lista já filtrada
+        data={filteredTrails} 
         keyExtractor={(item) => item.id}
         renderItem={renderTrailCard}
         contentContainerStyle={styles.listContainer}
@@ -128,11 +112,8 @@ const renderTrailCard = ({ item }: { item: (typeof MOCK_TRAILS)[0] }) => (
           <Text style={styles.sectionTitle}>Explorar sugestões de rotas</Text>
         }
         showsVerticalScrollIndicator={false}
-        // Mensagem amigável caso a pesquisa não encontre nada
         ListEmptyComponent={
-          <Text
-            style={{ textAlign: "center", marginTop: 20, color: "#6b7280" }}
-          >
+          <Text style={{ textAlign: "center", marginTop: 20, color: "#6b7280" }}>
             Nenhuma trilha encontrada para "{search}".
           </Text>
         }

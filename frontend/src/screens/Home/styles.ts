@@ -12,6 +12,25 @@ export const styles = StyleSheet.create({
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
   },
+  // NOVOS ESTILOS PARA ORGANIZAR O TOPO
+  headerTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  headerTextContainer: {
+    flex: 1,
+    paddingRight: 16, // Espaço para não encostar no avatar
+  },
+  profileButton: {
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // ---------------------------------
   greeting: {
     fontSize: 16,
     color: '#d1d5db',
