@@ -38,10 +38,13 @@ export function Profile() {
 
         {/* Lista de Opções */}
         <View style={styles.menuContainer}>
-          <TouchableOpacity style={styles.menuItem}>
-            <Text style={styles.menuItemText}>Editar Perfil</Text>
-            <Text style={styles.menuItemArrow}>›</Text>
-          </TouchableOpacity>
+          <TouchableOpacity 
+              style={styles.menuItem} 
+              onPress={() => router.push('/edit-profile')} // <- ADICIONADO AQUI
+            >
+              <Text style={styles.menuItemText}>Editar Perfil</Text>
+              <Text style={styles.menuItemArrow}>›</Text>
+            </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem}>
             <Text style={styles.menuItemText}>Minhas Sugestões de Trilhas</Text>
