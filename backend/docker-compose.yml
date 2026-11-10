@@ -12,5 +12,26 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  # ============================================================
+  # CONFIGURAÇÃO DA API NODE.JS PARA PRODUÇÃO NO SERVIDOR
+  # (Descomente quando criar o Dockerfile na pasta backend)
+  # ============================================================
+  # backend:
+  #   build: .
+  #   container_name: caminhos_leopoldina_api
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_USER: postgres
+  #     DB_PASS: sua_senha_aqui
+  #     DB_NAME: caminhos_leopoldina
+  #   volumes:
+  #     - ./uploads:/app/uploads # Mapeamento de volume para persistir as imagens no servidor
+  #   depends_on:
+  #     - postgres
+
 volumes:
   pgdata:

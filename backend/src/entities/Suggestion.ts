@@ -9,7 +9,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { User } from "./User";
-import { TrailType, Difficulty } from "./Trail";
+import { TrailType, TrailDifficulty } from "./Trail"; // 👈 Alterado de Difficulty para TrailDifficulty
 import { SuggestionPhoto } from "./SuggestionPhoto";
 
 export enum SuggestionStatus {
@@ -33,8 +33,9 @@ export class Suggestion {
   @Column({ type: "enum", enum: TrailType })
   type: TrailType;
 
-  @Column({ type: "enum", enum: Difficulty, nullable: true })
-  difficulty: Difficulty;
+  // 👈 Atualizado para usar TrailDifficulty
+  @Column({ type: "enum", enum: TrailDifficulty, nullable: true })
+  difficulty: TrailDifficulty;
 
   @Column({ type: "text" })
   description: string;

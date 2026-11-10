@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
   avatarText: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#9ca3af',
+    color: '#1b5e3b',
   },
   name: {
     fontSize: 24,
@@ -101,5 +101,16 @@ export const styles = StyleSheet.create({
     color: '#dc2626',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  deleteAccountButton: {
+    marginTop: 12,
+    padding: 14,
+    alignItems: 'center',
+  },
+  deleteAccountText: {
+    color: '#ef4444',
+    fontSize: 14,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 });

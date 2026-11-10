@@ -92,4 +92,18 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#c97d24",
   },
+  errorBox: {
+    backgroundColor: "#fee2e2",
+    borderWidth: 1,
+    borderColor: "#fca5a5",
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  errorText: {
+    color: "#b91c1c",
+    textAlign: "center",
+    fontSize: 13,
+    fontWeight: "600",
+  },
 });
