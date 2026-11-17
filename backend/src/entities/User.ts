@@ -26,4 +26,10 @@ export class User {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @Column({ default: "Leopoldina, MG" })
+  location: string;
+
+  @Column({ type: "text", nullable: true })
+  bio: string | null;
 }

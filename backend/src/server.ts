@@ -271,7 +271,13 @@ app.post("/register", async (req, res) => {
 
     const user = userRepository.create({ name, email, password });
     await userRepository.save(user);
-    res.status(201).json({ id: user.id, name: user.name, email: user.email });
+    res.status(201).json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      location: user.location,
+      bio: user.bio,
+    });
   } catch (error) {
     res.status(500).json({ error: "Erro ao criar usuário" });
   }
@@ -282,9 +288,53 @@ app.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const user = await AppDataSource.getRepository(User).findOneBy({ email, password });
     if (!user) return res.status(401).json({ error: "E-mail ou senha incorretos" });
-    res.json({ id: user.id, name: user.name, email: user.email });
+    res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      location: user.location,
+      bio: user.bio,
+    });
   } catch (error) {
     res.status(500).json({ error: "Erro ao realizar login" });
+  }
+});
+
+// PUT: Atualizar Perfil do Usuário
+app.put("/users/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, location, bio } = req.body;
+
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOneBy({ id });
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    if (name && name.trim()) {
+      user.name = name.trim();
+    }
+    if (location !== undefined) {
+      user.location = location.trim() || "Leopoldina, MG";
+    }
+    if (bio !== undefined) {
+      user.bio = bio.trim() || null;
+    }
+
+    await userRepository.save(user);
+
+    res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      location: user.location,
+      bio: user.bio,
+    });
+  } catch (error) {
+    console.error("Erro ao atualizar perfil:", error);
+    res.status(500).json({ error: "Erro ao atualizar perfil" });
   }
 });
 
@@ -299,7 +349,6 @@ app.delete("/users/:id", async (req, res) => {
       return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
-    // Remove as trilhas criadas pelo usuário para evitar erros de FK
     const trailRepository = AppDataSource.getRepository(Trail);
     await trailRepository.delete({ user_id: id });
 

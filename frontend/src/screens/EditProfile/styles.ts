@@ -16,6 +16,7 @@ export const styles = StyleSheet.create({
   },
   backButton: {
     padding: 5,
+    width: 70,
   },
   backButtonText: {
     color: '#ffffff',
@@ -26,8 +27,25 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  headerRightPlaceholder: {
+    width: 70,
+  },
   formContainer: {
     padding: 20,
+  },
+  errorBox: {
+    backgroundColor: '#fee2e2',
+    borderColor: '#fca5a5',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  errorText: {
+    color: '#dc2626',
+    fontSize: 13,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   inputGroup: {
     marginBottom: 20,

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from './styles';
 import { api } from '../../services/api';
@@ -10,32 +10,35 @@ interface UserData {
   id: string;
   name: string;
   email: string;
+  location?: string;
+  bio?: string | null;
 }
 
 export function Profile() {
   const router = useRouter();
   const [user, setUser] = useState<UserData | null>(null);
 
-  // Estados dos modais
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
 
-  useEffect(() => {
-    async function loadUserData() {
-      try {
-        const userJson = await AsyncStorage.getItem('@user');
-        if (userJson) {
-          setUser(JSON.parse(userJson));
+  useFocusEffect(
+    useCallback(() => {
+      async function loadUserData() {
+        try {
+          const userJson = await AsyncStorage.getItem('@user');
+          if (userJson) {
+            setUser(JSON.parse(userJson));
+          }
+        } catch (error) {
+          console.error('Erro ao carregar dados do usuário:', error);
         }
-      } catch (error) {
-        console.error('Erro ao carregar dados do usuário:', error);
       }
-    }
-    loadUserData();
-  }, []);
+      loadUserData();
+    }, [])
+  );
 
   const handleConfirmLogout = async () => {
     setLoggingOut(true);
@@ -55,7 +58,7 @@ export function Profile() {
     setDeletingAccount(true);
 
     try {
-      await api.delete(`/users/${user.id}`);
+      await api.delete('/users/' + user.id);
       await AsyncStorage.removeItem('@user');
       setIsDeleteAccountModalOpen(false);
       router.replace('/');
@@ -76,16 +79,19 @@ export function Profile() {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Cabeçalho do Perfil */}
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
             <Text style={styles.avatarText}>{getInitials(user?.name)}</Text>
           </View>
           <Text style={styles.name}>{user?.name || 'Explorador'}</Text>
-          <Text style={styles.location}>Leopoldina, MG</Text>
+          <Text style={styles.location}>{user?.location || 'Leopoldina, MG'}</Text>
+          {user?.bio ? (
+            <Text style={[styles.location, { marginTop: 8, paddingHorizontal: 24, textAlign: 'center' }]}>
+              {user.bio}
+            </Text>
+          ) : null}
         </View>
 
-        {/* Estatísticas Flutuantes */}
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
             <Text style={styles.statValue}>12</Text>
@@ -97,10 +103,9 @@ export function Profile() {
           </View>
         </View>
 
-        {/* Lista de Opções */}
         <View style={styles.menuContainer}>
-          <TouchableOpacity 
-            style={styles.menuItem} 
+          <TouchableOpacity
+            style={styles.menuItem}
             onPress={() => router.push('/edit-profile')}
           >
             <Text style={styles.menuItemText}>Editar Perfil</Text>
@@ -122,17 +127,15 @@ export function Profile() {
             <Text style={styles.menuItemArrow}>›</Text>
           </TouchableOpacity>
 
-          {/* Botão de Sair */}
-          <TouchableOpacity 
-            style={styles.logoutButton} 
+          <TouchableOpacity
+            style={styles.logoutButton}
             onPress={() => setIsLogoutModalOpen(true)}
           >
             <Text style={styles.logoutText}>Sair da Conta</Text>
           </TouchableOpacity>
 
-          {/* Botão de Excluir Conta */}
-          <TouchableOpacity 
-            style={styles.deleteAccountButton} 
+          <TouchableOpacity
+            style={styles.deleteAccountButton}
             onPress={() => setIsDeleteAccountModalOpen(true)}
           >
             <Text style={styles.deleteAccountText}>Excluir Minha Conta</Text>
@@ -140,7 +143,6 @@ export function Profile() {
         </View>
       </ScrollView>
 
-      {/* Modal de Confirmação de Logout */}
       <ConfirmModal
         visible={isLogoutModalOpen}
         title="Sair da Conta"
@@ -153,7 +155,6 @@ export function Profile() {
         onCancel={() => setIsLogoutModalOpen(false)}
       />
 
-      {/* Modal de Confirmação de Exclusão de Conta */}
       <ConfirmModal
         visible={isDeleteAccountModalOpen}
         title="Excluir Conta"
