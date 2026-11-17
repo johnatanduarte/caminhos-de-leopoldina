@@ -1,5 +1,4 @@
-import React from 'react';
-import Register from '../screens/Register/Register';
+import { Register } from "../screens/Register/Register";
 
 export default function RegisterRoute() {
   return <Register />;

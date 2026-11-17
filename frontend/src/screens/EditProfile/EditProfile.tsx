@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { getLocalProfile, saveLocalProfile } from '../../services/localProfile';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -16,14 +17,25 @@ export function EditProfile() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  // TODO: trocar pelos dados do usuário logado quando houver autenticação
-  const [name, setName] = useState('Johnatan Duarte Franco');
+  const [name, setName] = useState('Explorador');
   const [location, setLocation] = useState('Leopoldina, MG');
   const [bio, setBio] = useState('');
 
-  const handleSave = () => {
-    // Quando conectarmos ao backend, a requisição Axios entrará aqui
-    router.back();
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    let active = true;
+    getLocalProfile().then(p => { if (active) { setName(p.name); setLocation(p.location); setBio(p.bio); } })
+      .catch(() => { if (active) setError('Não foi possível ler o perfil local.'); });
+    return () => { active = false; };
+  }, []);
+  const handleSave = async () => {
+    if (busy) return;
+    if (!name.trim()) { setError('Digite seu nome.'); return; }
+    setBusy(true); setError('');
+    try { await saveLocalProfile({ name: name.trim(), location: location.trim(), bio: bio.trim() }); router.back(); }
+    catch { setError('Não foi possível salvar neste aparelho.'); }
+    finally { setBusy(false); }
   };
 
   return (
@@ -76,7 +88,8 @@ export function EditProfile() {
           />
         </View>
 
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+        {!!error && <Text style={{ color: '#a33428' }}>{error}</Text>}
+        <TouchableOpacity disabled={busy} style={styles.saveButton} onPress={handleSave}>
           <Text style={styles.saveButtonText}>Guardar Alterações</Text>
         </TouchableOpacity>
       </ScrollView>

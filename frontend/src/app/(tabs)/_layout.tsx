@@ -1,16 +1,21 @@
 import { Tabs } from "expo-router";
 import { Feather } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabLayout() {
+  // Adapta a barra inferior ao espaço ocupado pelo sistema.
+  const insets = useSafeAreaInsets();
+  const bottom = Math.max(8, insets.bottom);
+
   return (
     <Tabs
       screenOptions={{
-        headerShown: false, // Oculta o cabeçalho padrão para usarmos o nosso
-        tabBarActiveTintColor: "#1b5e3b", // Verde do Figma para a aba ativa
-        tabBarInactiveTintColor: "#9ca3af", // Cinza para inativas
+        headerShown: false,
+        tabBarActiveTintColor: "#1b5e3b",
+        tabBarInactiveTintColor: "#9ca3af",
         tabBarStyle: {
-          height: 110, // Aumenta a altura total da barra
-          paddingBottom: 55, // Empurra os ícones para cima, afastando da barra do sistema
+          height: 54 + bottom,
+          paddingBottom: bottom,
           paddingTop: 10,
           backgroundColor: "#ffffff",
           borderTopWidth: 1,
