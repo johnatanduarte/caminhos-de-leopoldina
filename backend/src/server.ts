@@ -7,6 +7,8 @@ import fs from "fs";
 import { AppDataSource } from "./data-source";
 import { Trail } from "./entities/Trail";
 import { User } from "./entities/User";
+import { TourGuide } from "./entities/TourGuide";
+import { Accommodation } from "./entities/Accommodation";
 
 const app = express();
 app.use(cors());
@@ -20,9 +22,9 @@ if (!fs.existsSync(uploadDir)) {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
-  }
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
 });
 const upload = multer({ storage });
 
@@ -34,10 +36,79 @@ const formatImageUrl = (req: express.Request, url: string | null) => {
   if (uploadIndex !== -1) {
     const relativePath = url.substring(uploadIndex);
     const host = req.headers.host || "localhost:3000";
-    return `${req.protocol}://${host}${relativePath}`;
+    return req.protocol + "://" + host + relativePath;
   }
   return url;
 };
+
+// --- SEED INICIAL: GUIAS DE TURISMO E HOSPEDAGEM ---
+async function seedTourismData() {
+  const guideRepo = AppDataSource.getRepository(TourGuide);
+  const accommodationRepo = AppDataSource.getRepository(Accommodation);
+
+  const existingGuides = await guideRepo.count();
+  if (existingGuides === 0) {
+    const initialGuides = guideRepo.create([
+      {
+        cadastur_number: "13.821.537.79-4",
+        name: "ANDREIA FRANZONI",
+        neighborhood: "Centro",
+        segment: "Guia de Turismo",
+      },
+      {
+        cadastur_number: "13.918.798.08-0",
+        name: "LUCILENE / LUCINHA",
+        neighborhood: "São Cristóvão",
+        segment: "Guia de Turismo",
+      },
+    ]);
+    await guideRepo.save(initialGuides);
+    console.log("✅ Guias de turismo cadastrados com sucesso.");
+  }
+
+  const existingAccommodations = await accommodationRepo.count();
+  if (existingAccommodations === 0) {
+    const initialAccommodations = accommodationRepo.create([
+      {
+        name: "Hotel Minas Tower",
+        address: "Avenida Getúlio Vargas, 215 - Bairro de Fátima (Leopoldina-MG)",
+        rating_info: "Conhecido, boas avaliações.",
+      },
+      {
+        name: "Hotel Alvorada",
+        address: "Rua Presidente Carlos Luz, 44 - Meia Laranja (Leopoldina-MG)",
+        rating_info: "Conhecido, boas avaliações.",
+      },
+      {
+        name: "Pousada Recanto da Jura",
+        address: "Rua Doutor Oswaldo Vieira, 3 - Bairro da Catedral (Leopoldina-MG)",
+        rating_info: "Pouco conhecido, ótimas avaliações.",
+      },
+      {
+        name: "Palace Hotel",
+        address: "Praça General Osório, 15 - Centro (Leopoldina-MG)",
+        rating_info: "Medianamente conhecido, boas avaliações.",
+      },
+      {
+        name: "Hotel LP",
+        address: "Rodovia Santos Dumont (Leopoldina-MG)",
+        rating_info: "Medianamente conhecido, boas avaliações.",
+      },
+      {
+        name: "Ritson Plaza Hotel",
+        address: "Rua Presidente Carlos Luz, 328 - Centro (Leopoldina-MG)",
+        rating_info: "Conhecido, boas avaliações.",
+      },
+      {
+        name: "Hotel e restaurante Santo Antônio",
+        address: "Rodovia Santos Dumont - Três Cruzes (Leopoldina-MG)",
+        rating_info: "Medianamente conhecido, médias avaliações.",
+      },
+    ]);
+    await accommodationRepo.save(initialAccommodations);
+    console.log("✅ Locais de hospedagem cadastrados com sucesso.");
+  }
+}
 
 // --- ROTAS DE TRILHAS ---
 app.get("/trails", async (req, res) => {
@@ -57,7 +128,7 @@ app.get("/trails/:id", async (req, res) => {
   try {
     const trail = await AppDataSource.getRepository(Trail).findOneBy({ id: req.params.id });
     if (!trail) return res.status(404).json({ error: "Trilha não encontrada" });
-    
+
     res.json({
       ...trail,
       image_url: formatImageUrl(req, trail.image_url),
@@ -70,27 +141,27 @@ app.get("/trails/:id", async (req, res) => {
 app.post("/trails", upload.single("image"), async (req, res) => {
   try {
     const { title, type, difficulty, distance_km, duration_mins, elevation_m, history, user_id } = req.body;
-    
+
     let image_url = null;
     if (req.file) {
-      image_url = `/uploads/${req.file.filename}`;
+      image_url = "/uploads/" + req.file.filename;
     }
 
     const trailRepository = AppDataSource.getRepository(Trail);
     const newTrail = trailRepository.create({
-      title, 
-      type, 
-      difficulty, 
-      distance_km: parseFloat(distance_km.replace(',', '.')), 
-      duration_mins: parseInt(duration_mins, 10), 
-      elevation_m: parseInt(elevation_m, 10), 
+      title,
+      type,
+      difficulty,
+      distance_km: parseFloat(distance_km.replace(",", ".")),
+      duration_mins: parseInt(duration_mins, 10),
+      elevation_m: parseInt(elevation_m, 10),
       history,
       image_url,
-      user_id: user_id || null
+      user_id: user_id || null,
     });
-    
+
     await trailRepository.save(newTrail);
-    
+
     res.status(201).json({
       ...newTrail,
       image_url: formatImageUrl(req, newTrail.image_url),
@@ -121,13 +192,13 @@ app.put("/trails/:id", upload.single("image"), async (req, res) => {
     if (title) trail.title = title;
     if (type) trail.type = type;
     if (difficulty) trail.difficulty = difficulty;
-    if (distance_km) trail.distance_km = parseFloat(String(distance_km).replace(',', '.'));
+    if (distance_km) trail.distance_km = parseFloat(String(distance_km).replace(",", "."));
     if (duration_mins) trail.duration_mins = parseInt(String(duration_mins), 10);
     if (elevation_m) trail.elevation_m = parseInt(String(elevation_m), 10);
     if (history) trail.history = history;
 
     if (req.file) {
-      trail.image_url = `/uploads/${req.file.filename}`;
+      trail.image_url = "/uploads/" + req.file.filename;
     }
 
     await trailRepository.save(trail);
@@ -164,6 +235,29 @@ app.delete("/trails/:id", async (req, res) => {
   } catch (error) {
     console.error("Erro ao excluir trilha:", error);
     res.status(500).json({ error: "Erro ao excluir trilha" });
+  }
+});
+
+// --- ROTAS DE TURISMO LOCAL (GUIAS E HOSPEDAGEM) ---
+app.get("/tour-guides", async (req, res) => {
+  try {
+    const guideRepo = AppDataSource.getRepository(TourGuide);
+    const guides = await guideRepo.find({ order: { name: "ASC" } });
+    res.json(guides);
+  } catch (error) {
+    console.error("Erro ao buscar guias:", error);
+    res.status(500).json({ error: "Erro ao buscar guias de turismo" });
+  }
+});
+
+app.get("/accommodations", async (req, res) => {
+  try {
+    const accommodationRepo = AppDataSource.getRepository(Accommodation);
+    const accommodations = await accommodationRepo.find({ order: { name: "ASC" } });
+    res.json(accommodations);
+  } catch (error) {
+    console.error("Erro ao buscar hospedagens:", error);
+    res.status(500).json({ error: "Erro ao buscar locais de hospedagem" });
   }
 });
 
@@ -218,8 +312,9 @@ app.delete("/users/:id", async (req, res) => {
 });
 
 AppDataSource.initialize()
-  .then(() => {
+  .then(async () => {
     console.log("📦 Banco de dados conectado!");
+    await seedTourismData();
     app.listen(3000, "0.0.0.0", () => console.log("🚀 Servidor rodando na porta 3000"));
   })
   .catch((error) => console.error("❌ Erro ao conectar:", error));
